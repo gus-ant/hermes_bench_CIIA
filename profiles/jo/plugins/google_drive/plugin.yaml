@@ -1,0 +1,12 @@
+name: google_drive
+version: "0.1.0"
+description: "Integração do Hermes com o Google Drive (listar, buscar, upload e download)"
+author: User
+kind: backend
+provides_tools:
+  - google_drive_search
+  - google_drive_upload
+dependencies:
+  - google-api-python-client
+  - google-auth-httplib2
+  - google-auth-oauthlib

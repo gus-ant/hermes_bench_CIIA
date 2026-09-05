@@ -1,0 +1,4 @@
+name: jo
+version: 0.1.0
+description: "Agente de Gestão do Conhecimento do CIIA"
+hermes_requires: ">=0.17.0"
