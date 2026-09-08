@@ -19,7 +19,7 @@ export default function RootLayout({
       <head>
         <meta name="color-scheme" content="dark" />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         <div className="app-shell">
           <Sidebar />
           <main className="main-content">

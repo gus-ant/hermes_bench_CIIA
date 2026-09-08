@@ -143,9 +143,120 @@ Dentro do diretório `hermes-bench/`:
 - `npm start`: Inicia o servidor otimizado de produção.
 - `npm run lint`: Executa a verificação estática do ESLint.
 - `npm run seed`: Popula a base MongoDB com modelos, tarefas e suítes iniciais.
+- `npm run cli`: Executa o CLI Runner standalone (ver seção 9).
+- `npm run cli:mock`: Executa o CLI em modo Mock (sem API keys).
+- `npm run cli:list`: Lista todos os modelos disponíveis.
 
 ---
 
 ## 8. Licença e Créditos
 
 Desenvolvido para o **CIIA (Centro de Inteligência Artificial)** no âmbito do projeto **HERMES**. Todos os direitos reservados.
+
+---
+
+## 9. CLI Runner (Modo Terminal) ⚡
+
+O **CLI Runner** é um executável standalone que roda o benchmark **sem servidor Next.js e sem MongoDB**. Ideal para uso em máquinas com recursos limitados, automações e CI/CD.
+
+### Características
+
+- **~50 MB de RAM** (vs ~2 GB do servidor Next.js + MongoDB)
+- Persiste resultados em **SQLite** (`cli-results/results.db`)
+- **Execução paralela** por modelo (mais rápido)
+- Suporte a **LLM-as-a-Judge** real (`--judge-model`)
+- Barra de progresso e leaderboard direto no terminal
+- Exportação em **JSON** e **CSV**
+- Graceful shutdown com `Ctrl+C`
+
+### Instalação das dependências extras
+
+```bash
+cd hermes-bench
+npm install
+```
+
+### Uso
+
+```bash
+# Modo Mock (sem chaves de API)
+npm run cli:mock
+
+# Modo Mock com agente e judge específicos
+npm run cli -- --mock --agents capacitacao --judge-model deepseek-v3
+
+# Modo Real com modelos específicos
+npm run cli -- --models deepseek-v3,qwen-max --agents capacitacao --mode real --trials 2
+
+# Modo Real — todos os modelos, todos os agentes
+npm run cli -- --mode real
+
+# Exportar resultados em CSV
+npm run cli -- --mock --output csv
+
+# Verbose (mostra cada run individualmente)
+npm run cli -- --mock --verbose
+
+# Listar modelos disponíveis
+npm run cli:list
+
+# Listar agentes disponíveis
+npm run cli -- --list-agents
+
+# Ajuda completa
+npm run cli -- --help
+```
+
+### Configuração de Ambiente
+
+Crie (ou edite) o arquivo `.env.local` em `hermes-bench/`:
+
+```env
+# Provedores Ocidentais
+MONGODB_URI=mongodb://localhost:27017/hermes_bench
+OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
+GOOGLE_API_KEY=AIza...
+MISTRAL_API_KEY=...
+TOGETHER_API_KEY=...
+OPENROUTER_API_KEY=sk-or-...
+
+# Provedores Chineses
+DEEPSEEK_API_KEY=sk-...        # api.deepseek.com
+SILICONFLOW_API_KEY=sk-...     # api.siliconflow.cn (Qwen-Max, Yi Lightning)
+MOONSHOT_API_KEY=sk-...        # api.moonshot.cn (Kimi)
+ZHIPU_API_KEY=...              # open.bigmodel.cn (GLM-4-Plus)
+```
+
+> Modelos sem chave configurada são ignorados automaticamente (não causam erro).
+
+### Onde os resultados ficam
+
+```
+hermes-bench/
+└── cli-results/
+    ├── results.db           ← SQLite com todos os runs
+    ├── bench-XXXX-...json   ← Exportação JSON (--output json)
+    └── bench-XXXX-...csv    ← Exportação CSV (--output csv)
+```
+
+Use qualquer visualizador SQLite (ex: [DB Browser for SQLite](https://sqlitebrowser.org/)) para explorar `results.db`.
+
+---
+
+## 10. Modelos de IA Chineses
+
+O HERMES-BENCH agora suporta nativamente os principais modelos de IA chineses:
+
+| Modelo | Provedor | ID no CLI | Thinking Tags | Preço In/Out (/1M) |
+|---|---|---|---|---|
+| DeepSeek V3 | DeepSeek | `deepseek-v3` | — | \$0.27 / \$1.10 |
+| DeepSeek R1 | DeepSeek | `deepseek-r1` | 🧠 Sim | \$0.55 / \$2.19 |
+| Qwen-Max (72B) | SiliconFlow | `qwen-max` | — | \$0.40 / \$1.20 |
+| Kimi 32K | Moonshot AI | `moonshot-v1-32k` | — | \$0.12 / \$0.12 |
+| GLM-4-Plus | Zhipu AI | `glm-4-plus` | — | \$0.14 / \$0.14 |
+| Yi Lightning | SiliconFlow | `yi-lightning` | — | \$0.14 / \$0.14 |
+
+> 🧠 **Thinking Tags**: modelos como o DeepSeek-R1 retornam raciocínio interno entre tags `<think>...</think>`. O HERMES-BENCH remove essas tags automaticamente antes de avaliar a resposta final.
+
+Todos usam a **API OpenAI-compatible** — basta configurar a chave no `.env.local`.

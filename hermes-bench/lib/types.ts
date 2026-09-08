@@ -47,6 +47,8 @@ export interface ModelDefinition {
   endpoint: string;
   modelIdentifier: string;
   supportsToolCalling: boolean;
+  /** True for models that wrap chain-of-thought in <think>...</think> tags (e.g. DeepSeek-R1, QwQ) */
+  supportsThinkingTags?: boolean;
   enabled: boolean;
   color: string;
   description: string;

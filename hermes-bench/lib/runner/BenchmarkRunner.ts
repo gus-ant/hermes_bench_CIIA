@@ -10,6 +10,7 @@ import {
   TaskDoc,
 } from "@/lib/db/models";
 import { MockExecutor, calculateCost } from "@/lib/runner/MockExecutor";
+import { getRealExecutor } from "@/lib/runner/RealExecutor";
 import { AutoEvaluator } from "@/lib/evaluator/AutoEvaluator";
 import { ScoreCalculator } from "@/lib/scorer/ScoreCalculator";
 import { BenchmarkConfig, BenchmarkProgress, ScoreWeights } from "@/lib/types";
@@ -85,8 +86,18 @@ export class BenchmarkRunner {
 
           try {
             // Execute run
-            const executor = new MockExecutor(model.id);
-            const result = await executor.execute(task);
+            let result;
+            if (this.isMockMode) {
+              const executor = new MockExecutor(model.id);
+              result = await executor.execute(task);
+            } else {
+              const executeReal = getRealExecutor(model.provider);
+              result = await executeReal({
+                modelIdentifier: model.modelIdentifier,
+                endpoint: model.endpoint,
+                apiKey: process.env.OPENROUTER_API_KEY || "",
+              }, task);
+            }
 
             // Calculate cost from pricing config
             const cost = calculateCost(

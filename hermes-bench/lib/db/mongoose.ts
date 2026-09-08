@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
-
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/hermes_bench";
+import dns from "dns";
 
 interface MongooseCache {
   conn: typeof mongoose | null;
@@ -23,8 +22,17 @@ export async function connectToDatabase(): Promise<typeof mongoose> {
     return cached.conn;
   }
 
+  const uri = process.env.MONGODB_URI || "mongodb://localhost:27017/hermes_bench";
+  if (uri.startsWith("mongodb+srv://")) {
+    try {
+      dns.setServers(["8.8.8.8", "1.1.1.1"]);
+    } catch (e) {
+      // ignore
+    }
+  }
+
   if (!cached.promise) {
-    cached.promise = mongoose.connect(MONGODB_URI, {
+    cached.promise = mongoose.connect(uri, {
       bufferCommands: false,
     });
   }

@@ -75,6 +75,6 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("Create benchmark error:", error);
-    return NextResponse.json({ error: "Failed to create benchmark" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to create benchmark", details: error instanceof Error ? error.message : String(error) }, { status: 500 });
   }
 }

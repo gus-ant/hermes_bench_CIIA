@@ -8,11 +8,15 @@
     "start": "next start",
     "lint": "eslint",
     "seed": "npx tsx scripts/seed.ts",
-    "test": "npx jest --passWithNoTests"
+    "test": "npx jest --passWithNoTests",
+    "cli": "npx tsx cli/index.ts",
+    "cli:mock": "npx tsx cli/index.ts --mock",
+    "cli:list": "npx tsx cli/index.ts --list-models"
   },
   "dependencies": {
     "@types/recharts": "^1.8.29",
     "@types/uuid": "^10.0.0",
+    "commander": "^12.1.0",
     "date-fns": "^4.4.0",
     "lucide-react": "^1.41.0",
     "mongoose": "^9.9.5",
@@ -20,12 +24,14 @@
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "recharts": "^3.10.1",
+    "sql.js": "^1.12.0",
     "uuid": "^14.0.2"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/sql.js": "^1.4.9",
     "eslint": "^9",
     "eslint-config-next": "16.3.4",
     "typescript": "^5"

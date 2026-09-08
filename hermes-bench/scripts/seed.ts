@@ -8,11 +8,31 @@
  * Run with: npx tsx scripts/seed.ts
  */
 
+import fs from "fs";
+import path from "path";
+import dns from "dns";
 import mongoose from "mongoose";
+
+dns.setServers(["8.8.8.8", "1.1.1.1"]);
 import { AgentDoc, ModelDoc, TaskDoc } from "../lib/db/models";
 import { agentsData } from "../data/agents";
 import { modelsData } from "../data/models";
 import { allTasks } from "../data/tasks/index";
+
+// Load .env.local if present
+const envLocalPath = path.resolve(__dirname, "../.env.local");
+if (fs.existsSync(envLocalPath)) {
+  const envConfig = fs.readFileSync(envLocalPath, "utf-8");
+  for (const line of envConfig.split("\n")) {
+    const trimmed = line.trim();
+    if (trimmed && !trimmed.startsWith("#")) {
+      const [key, ...values] = trimmed.split("=");
+      if (key && values.length > 0) {
+        process.env[key.trim()] = values.join("=").trim();
+      }
+    }
+  }
+}
 
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/hermes_bench";
 

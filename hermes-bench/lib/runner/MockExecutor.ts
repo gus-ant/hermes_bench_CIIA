@@ -208,6 +208,13 @@ export class MockExecutor {
       "mistral-small-3-2-24b": 100,
       "qwen3-32b": 80,
       "gpt-5-mini": 90,
+      // Modelos chineses
+      "deepseek-v3": 95,
+      "deepseek-r1": 40,     // Mais lento por raciocínio explícito
+      "qwen-max": 75,
+      "moonshot-v1-32k": 85,
+      "glm-4-plus": 80,
+      "yi-lightning": 110,
     };
     return speeds[this.modelId] || 100;
   }
@@ -219,6 +226,13 @@ export class MockExecutor {
       "qwen3-32b": 0.88,
       "mistral-small-3-2-24b": 0.82,
       "llama-4-scout": 0.79,
+      // Modelos chineses
+      "deepseek-v3": 0.91,
+      "deepseek-r1": 0.89,
+      "qwen-max": 0.87,
+      "moonshot-v1-32k": 0.84,
+      "glm-4-plus": 0.83,
+      "yi-lightning": 0.80,
     };
     const difficultyPenalty: Record<string, number> = {
       facil: 0,
@@ -263,6 +277,13 @@ export class MockExecutor {
       "qwen3-32b": "Raciocínio detalhado e resposta completa:",
       "mistral-small-3-2-24b": "Resposta direta e pragmática:",
       "llama-4-scout": "Análise contextual e resposta elaborada:",
+      // Modelos chineses
+      "deepseek-v3": "Análise aprofundada com raciocínio passo a passo:",
+      "deepseek-r1": "[Raciocínio concluído]\n\nResposta fundamentada:",
+      "qwen-max": "Resposta abrangente e bem estruturada:",
+      "moonshot-v1-32k": "Análise detalhada com atenção ao contexto:",
+      "glm-4-plus": "Resposta precisa e informativa:",
+      "yi-lightning": "Resposta objetiva e direta:",
     };
     return personalities[this.modelId] || "Resposta:";
   }
