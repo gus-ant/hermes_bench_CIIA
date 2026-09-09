@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HERMES-BENCH: Metodologia e Ajustes</title>
+  <style>
+    /* Reset & Base */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      background-color: #ffffff;
+      color: #000000;
+      font-family: "Times New Roman", Times, serif;
+      font-size: 11pt;
+      line-height: 1.6;
+      max-width: 850px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      text-align: justify;
+    }
+
+    /* Headings */
+    h1, h2, h3, h4 {
+      font-family: "Arial", Helvetica, sans-serif;
+      color: #000000;
+      margin-top: 1.5em;
+      margin-bottom: 0.5em;
+      text-align: left;
+    }
+    
+    h1.article-title {
+      font-size: 20pt;
+      text-align: center;
+      margin-top: 0;
+      margin-bottom: 0.5em;
+      line-height: 1.3;
+    }
+
+    h2 { font-size: 14pt; border-bottom: 1px solid #000; padding-bottom: 2px; }
+    h3 { font-size: 12pt; }
+    
+    p { margin-bottom: 1em; }
+
+    a { color: #0000ee; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Article Meta */
+    .authors { text-align: center; margin-bottom: 1em; font-size: 12pt; }
+    .affiliations { text-align: center; margin-bottom: 2em; font-size: 10pt; font-style: italic; }
+    .metadata-block { text-align: center; font-size: 9pt; margin-bottom: 2em; color: #444; }
+
+    /* Abstract */
+    .abstract {
+      margin: 0 40px 2em 40px;
+      padding: 15px 0;
+      border-top: 1px solid #000;
+      border-bottom: 1px solid #000;
+      font-size: 10pt;
+    }
+    .abstract strong { font-family: "Arial", Helvetica, sans-serif; font-size: 10pt; }
+
+    /* Lists */
+    ul, ol { margin-left: 20px; margin-bottom: 1em; }
+    li { margin-bottom: 0.5em; }
+    
+    /* Definitions (Metrics, Variables) */
+    dl { margin-bottom: 1.5em; }
+    dt { font-weight: bold; margin-top: 0.8em; }
+    dd { margin-left: 20px; margin-bottom: 0.5em; }
+
+    /* Tables (Booktabs style) */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 2em 0;
+      font-size: 10pt;
+    }
+    th, td {
+      padding: 8px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      border-top: 2px solid #000;
+      border-bottom: 1px solid #000;
+      font-weight: bold;
+    }
+    tr:last-child td { border-bottom: 2px solid #000; }
+    table caption {
+      caption-side: top;
+      text-align: left;
+      font-weight: bold;
+      margin-bottom: 0.5em;
+    }
+
+    /* Code and Preformatted */
+    code {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 0.95em;
+      background-color: #f5f5f5;
+      padding: 1px 3px;
+    }
+    pre {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 0.9em;
+      background-color: #fcfcfc;
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin: 1em 0;
+      overflow-x: auto;
+      line-height: 1.4;
+    }
+    .diff-add { font-weight: bold; color: #000; }
+    .diff-rem { text-decoration: line-through; color: #555; }
+    .diff-cmt { font-style: italic; color: #666; }
+    .diff-key { font-weight: bold; }
+    .diff-str { color: #333; }
+
+    /* Hypotheses */
+    .hypothesis {
+      margin: 1.5em 20px;
+      padding: 10px 15px;
+      border-left: 3px solid #000;
+      background-color: #fafafa;
+    }
+    .hypothesis-title { font-weight: bold; margin-bottom: 0.5em; display: block; }
+    .formula {
+      font-family: "Courier New", Courier, monospace;
+      display: block;
+      text-align: center;
+      margin: 10px 0;
+      font-size: 10pt;
+    }
+
+    /* Alerts / Notes */
+    .alert {
+      margin: 1.5em 0;
+      padding: 10px 15px;
+      border: 1px solid #000;
+      background-color: #fdfdfd;
+      font-size: 10pt;
+    }
+    .alert-title { font-weight: bold; text-transform: uppercase; margin-bottom: 0.5em; display: block; }
+
+    /* Footer */
+    .footer {
+      margin-top: 4em;
+      padding-top: 1em;
+      border-top: 1px solid #ccc;
+      text-align: center;
+      font-size: 9pt;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <h1 class="article-title">Benchmark de Uso de Ferramentas por Agentes de IA em Infraestrutura Restrita</h1>
+  
+  <div class="authors">
+    Ricardo, André, Gustavo, João, Lucas
+  </div>
+  
+  <div class="affiliations">
+    Centro de Inovação e Inteligência Artificial (CIIA) - Universidade do Distrito Federal (UnDF)
+  </div>
+
+  <div class="metadata-block">
+    <strong>Status:</strong> Draft (Fase 0 - Pré-coleta) | <strong>Data:</strong> 08 de Setembro de 2026 | <strong>Tags:</strong> [HERMES] [LGPD] [Benchmark]
+  </div>
+
+  <div class="abstract">
+    <strong>Resumo:</strong> Este documento formaliza o desenho metodológico do HERMES-BENCH. O objetivo central é medir se a presença de um orquestrador (e não puramente o tamanho em parâmetros do modelo) é o fator determinante que torna um agente utilizável em infraestruturas computacionais restritas, típicas de órgãos públicos. O instrumento define 3 hipóteses pré-registradas, 8 métricas de medição rigorosas (destacando a Tool-Use Accuracy como primária), e detalha o protocolo de avaliação cega em 4 fases sequenciais. Além disso, são documentados 4 ajustes arquiteturais críticos necessários no código-fonte base antes do início da coleta de dados.
+  </div>
+
+  <h2 id="enquadramento">1. Enquadramento e Pergunta Central</h2>
+  <p>Quando um agente de IA usa ferramentas para executar ações reais em sistemas de um órgão público, <strong>qual combinação de porte de modelo, orquestrador e classe de infraestrutura</strong> produz a maior taxa de acerto, a que custo por tarefa efetivamente concluída e com que consistência entre execuções?</p>
+  
+  <p>As contribuições originais deste benchmark incluem:</p>
+  <ul>
+    <li><strong>Ineditismo:</strong> Não há benchmark público que cruze <em>tool-use accuracy</em> como métrica primária com <em>classe de infraestrutura</em> como variável, operando no domínio administrativo público brasileiro e em português.</li>
+    <li><strong>Reaproveitamento:</strong> Absorvem-se as 30 tarefas existentes da versão anterior. A escolha do modelo ideal sai como resultado secundário da Fase 1 do experimento.</li>
+    <li><strong>Valor Prático:</strong> Se as hipóteses se confirmarem, estabelece-se um fundamento econômico (baseado em dados) para a viabilidade da soberania de dados sem a necessidade de clusters de altíssimo custo.</li>
+    <li><strong>Transparência Open-Source:</strong> O benchmark será disponibilizado integralmente como código aberto (open-source). Essa abertura elimina a obscuridade dos testes, permite usar os logs brutos como explicação para cada resultado e blinda o projeto contra percepções de viés (evitando a impressão de favorecimento da solução interna). Do ponto de vista comercial e científico, esse nível de transparência torna os resultados inquestionáveis e altamente defensáveis.</li>
+  </ul>
+
+  <h2 id="hipoteses">2. Hipóteses Centrais</h2>
+  <p>As hipóteses a seguir são pré-registradas. Qualquer alteração pós-coleta invalida os resultados metodológicos.</p>
+
+  <div class="hypothesis">
+    <span class="hypothesis-title">H1 - Hipótese Principal (Efeito do Orquestrador na TUA)</span>
+    <span class="formula">
+      H0: TUA(com orquestrador) - TUA(sem orquestrador) &le; 0<br/>
+      H1: TUA(com orquestrador) - TUA(sem orquestrador) &gt; 0
+    </span>
+    <p><em>Nota metodológica:</em> O efeito mínimo de interesse é delta &ge; 30 pp. Teste aplicado: McNemar exato pareado (alfa = 0,05 unicaudal), com correção de Holm-Bonferroni sobre os 3 portes de modelo testados.</p>
+  </div>
+
+  <div class="hypothesis">
+    <span class="hypothesis-title">H12 - Efeito Equalizador (7B + Orquestrador vs. 70B Direto)</span>
+    <span class="formula">
+      H0_12: TUA(7B + orquestrador) &lt; TUA(70B sem orquestrador)<br/>
+      H1_12: TUA(7B + orquestrador) &ge; TUA(70B sem orquestrador)
+    </span>
+    <p><em>Nota metodológica:</em> Teste de não inferioridade com margem de 5 pp. Sustenta o argumento econômico contra a aquisição obrigatória de clusters massivos.</p>
+  </div>
+
+  <div class="hypothesis">
+    <span class="hypothesis-title">H13 - Viabilidade Financeira (Custo)</span>
+    <span class="formula">
+      H1_13: existe (infra, modelo, orquestrador) tal que CTCE(local) &lt; CTCE(API fronteira),<br/>
+      mantida TUA estatisticamente não inferior.
+    </span>
+  </div>
+
+  <h2 id="design-experimental">3. Design Experimental e Variáveis</h2>
+  <p>O desenho adota uma estratégia fatorial fracionada, com as seguintes variáveis e níveis:</p>
+  <ul>
+    <li><strong>O (Orquestrador):</strong> HERMES, LangGraph, Nenhum (Controle). O controle é essencial para testar H1.</li>
+    <li><strong>M (Porte do Modelo):</strong> 7B, 27B, 70B, API de Fronteira (teto de referência).</li>
+    <li><strong>I (Infraestrutura):</strong> A (~24 GB VRAM), B (~80 GB VRAM), C (Multi-GPU).</li>
+    <li><strong>S (Solução de Teste):</strong> Capacitação, Drive, Comunicação, SEI UnDF. (O SEI atua como caso de validade externa).</li>
+  </ul>
+
+  <div class="alert">
+    <span class="alert-title">Nota: Estratégia Fatorial Fracionada</span>
+    Um arranjo fatorial completo demandaria 1.080 execuções por repetição. Adotou-se o modelo fracionado em 4 fases sequenciais, restringindo o espaço de busca. Total estimado: 830 execuções.
+  </div>
+
+  <h2 id="fases">4. Execução por Fases</h2>
+  <table>
+    <caption>Tabela 1: Cronograma de execuções fatoriais fracionadas.</caption>
+    <thead>
+      <tr>
+        <th>Fase</th>
+        <th>Isolamento / Objetivo</th>
+        <th>Condições</th>
+        <th>Tarefas</th>
+        <th>Execuções</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>F1</strong></td>
+        <td>Efeito do orquestrador (infra fixa em B)</td>
+        <td>10</td>
+        <td>30</td>
+        <td>300</td>
+      </tr>
+      <tr>
+        <td><strong>F2</strong></td>
+        <td>Sensibilidade à infraestrutura (3 melhores da F1)</td>
+        <td>6</td>
+        <td>30</td>
+        <td>180</td>
+      </tr>
+      <tr>
+        <td><strong>F3</strong></td>
+        <td>Consistência (3 melhores condições repetidas 3x)</td>
+        <td>3</td>
+        <td>30</td>
+        <td>270</td>
+      </tr>
+      <tr>
+        <td><strong>F4</strong></td>
+        <td>Validade externa (SEI) (3 melhores + 1 controle)</td>
+        <td>4</td>
+        <td>20</td>
+        <td>80</td>
+      </tr>
+      <tr>
+        <td colspan="4" style="text-align:right"><strong>Total:</strong></td>
+        <td><strong>830</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="alert">
+    <span class="alert-title">Regra de Expansão (Pré-registrada)</span>
+    Se a F1 produzir delta entre 10 e 30 pp, o catálogo será expandido para 60 tarefas e a F1 reexecutada, reportando os dados iniciais como "estudo piloto". Impede-se o aumento artificial do N após a análise do p-value.
+  </div>
+
+  <h2 id="metricas">5. Métricas Formais</h2>
+  <p>As oito métricas abaixo são definidas para garantir apuração determinística entre avaliadores independentes:</p>
+  <dl>
+    <dt>M1 - Tool-Use Accuracy (TUA) [Métrica Primária]</dt>
+    <dd>Variável binária. <code>TUA(t) = 1</code> se, e somente se, o agente executou a sequência correta de chamadas, com parâmetros corretos, sem emissões adicionais de operações de <strong>escrita</strong>.</dd>
+    
+    <dt>M2 - Tool-Use Score (TUS)</dt>
+    <dd>Score parcial. Aplica penalidade severa (<code>-2.0</code>) para escritas não solicitadas (irreversíveis na administração pública) e leitura desnecessária (<code>-0.5</code>).</dd>
+
+    <dt>M3 - F1 de Parâmetros</dt>
+    <dd>Mede a precisão e recall dos argumentos (pares de chave-valor) isolando erros sintáticos de seleção falha da própria ferramenta.</dd>
+
+    <dt>M4 - Qualidade do Output</dt>
+    <dd>Avaliação via LLM-as-a-Judge (Rubrica 0-4) para correção factual, formato e ausência de alucinação.</dd>
+
+    <dt>M5 - Consistência entre Execuções</dt>
+    <dd>Mede a unanimidade sobre repetições. Sistemas inconsistentes são preteridos para produção crítica.</dd>
+
+    <dt>M6 - CTCE (Custo por Tarefa Concluída)</dt>
+    <dd>Definido como <code>custo_total / n(TUA=1)</code>. Falhas totais resultam em CTCE infinito (inviável).</dd>
+
+    <dt>M7 - Latência</dt>
+    <dd>Tempos de resposta (p50 e p95), fundamentais para atendimento ao cidadão.</dd>
+
+    <dt>M8 - Resiliência à Exceção</dt>
+    <dd>Injeção de falha HTTP 500 controlada (em 20% dos casos) para aferir a capacidade de recuperação versus falhas silenciosas.</dd>
+  </dl>
+
+  <h2 id="ajustes">6. Ajustes Necessários ao Projeto Base</h2>
+  <p>Para suportar o rigor da metodologia supracitada, quatro ajustes estruturais devem ser implementados no repositório <code>hermes-bench/</code> <strong>antes</strong> do início das rodadas.</p>
+
+  <h3>6.1. Ajuste 1 (Crítico): Sequência Esperada na Interface TaskDefinition</h3>
+  <p>O campo <code>tools: string[]</code> deve evoluir para suportar a sequência determinística esperada, essencial para o cômputo automático de M1 e M2.</p>
+  <pre>
+<span class="diff-cmt">// ANTES (lib/types.ts)</span>
+<span class="diff-key">export interface</span> TaskDefinition {
+<span class="diff-rem">  tools: string[];</span>
+}
+
+<span class="diff-cmt">// DEPOIS Proposto (lib/types.ts)</span>
+<span class="diff-key">export interface</span> ToolCallPredicado {
+  nome_param: <span class="diff-str">string</span>;
+  tipo_verificacao: <span class="diff-str">"exact" | "regex" | "set"</span>;
+  valor_esperado: <span class="diff-str">any</span>;
+}
+
+<span class="diff-key">export interface</span> ToolCallEsperada {
+  ferramenta: <span class="diff-str">string</span>;
+  efeito_externo: <span class="diff-str">"leitura" | "escrita"</span>;
+  parametros: ToolCallPredicado[];
+}
+
+<span class="diff-key">export interface</span> TaskDefinition {
+<span class="diff-add">  sequencia_esperada: ToolCallEsperada[];</span>
+}
+</pre>
+  
+  <h3>6.2. Ajuste 2 (Crítico): ToolUsageEvaluator Nativo</h3>
+  <p>Criação do <code>lib/evaluator/ToolUsageEvaluator.ts</code> para análise programática do log de chamadas. Ele percorrerá o array <code>sequencia_esperada</code> calculando de forma fechada e sem LLM os valores das métricas M1 (TUA), M2 (TUS) e M3 (F1), gravando os resultados no <code>RunDocument</code>.</p>
+
+  <h3>6.3. Ajuste 3 (Importante): Camada de Orquestradores (Adapter Pattern)</h3>
+  <p>Em <code>cli/CliRunner.ts</code> é necessário abstrair o executor. Deve-se injetar o <code>OrchestratorAdapter</code> (instanciando LangGraph, HERMES ou Nenhum). <strong>Crucial:</strong> A cada invocação do loop, o estado do pipeline deve sofrer <em>reset</em> rígido, prevenindo vazamento de memória de contexto entre tarefas.</p>
+
+  <h3>6.4. Ajuste 4 (Jurídico/Operacional): Governança LGPD para o SEI</h3>
+  <p>A utilização de 20 documentos reais restringe a Fase 4. Como condição prévia e mandatória: (i) registro da base legal fundamentada; (ii) designação de responsável; (iii) processo de anonimização manual de 100% da amostra.</p>
+
+  <h2 id="catalogo">7. Catálogo de Modelos Avaliados</h2>
+  <table>
+    <caption>Tabela 2: Relação dos Large Language Models incorporados ao corpus experimental.</caption>
+    <thead>
+      <tr>
+        <th>Modelo</th>
+        <th>Parâmetros</th>
+        <th>Provedor</th>
+        <th>Tool Calling</th>
+        <th>Papel Alocado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Gemma 2 9B IT</td><td>9B</td><td>OpenRouter</td><td>Sim</td><td>Nível 7B (free)</td></tr>
+      <tr><td>Llama 3.1 8B</td><td>8B</td><td>OpenRouter</td><td>Sim</td><td>Nível 7B (free)</td></tr>
+      <tr><td>Qwen 2.5 7B</td><td>7B</td><td>OpenRouter</td><td>Sim</td><td>Nível 7B (H12)</td></tr>
+      <tr><td>Mistral Small 3.2</td><td>24B</td><td>Mistral AI</td><td>Sim</td><td>Nível 27B</td></tr>
+      <tr><td>Qwen3 32B</td><td>32B</td><td>Together AI</td><td>Sim</td><td>Nível 27B</td></tr>
+      <tr><td>DeepSeek V3</td><td>671B MoE</td><td>DeepSeek</td><td>Sim</td><td>Nível 70B / ref.</td></tr>
+      <tr><td>GPT-5 Mini</td><td>n/d</td><td>OpenAI</td><td>Sim</td><td>API Fronteira</td></tr>
+      <tr><td>Gemini 2.5 Flash-Lite</td><td>n/d</td><td>Google</td><td>Sim</td><td>API Fronteira (econ.)</td></tr>
+      <tr><td>DeepSeek R1</td><td>671B MoE</td><td>DeepSeek</td><td>Não</td><td>Referência Textual</td></tr>
+    </tbody>
+  </table>
+
+  <h2 id="custo">8. Análise de Custos</h2>
+  <table>
+    <caption>Tabela 3: Estimativa orçamentária da Rodada 1 do experimento.</caption>
+    <thead>
+      <tr>
+        <th>Rubrica</th>
+        <th>Descrição</th>
+        <th>Estimativa (R$)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Inferência API (F1, F3, F4)</td>
+        <td>~650 runs. Previsão de expansão 10x de tokens.</td>
+        <td>20,00 - 40,00</td>
+      </tr>
+      <tr>
+        <td>LLM-as-a-Judge</td>
+        <td>Apuração automática total e sample para kappa.</td>
+        <td>40,00 - 80,00</td>
+      </tr>
+      <tr>
+        <td>GPU Bare-metal (F2)</td>
+        <td>15h de alocação (H100/A100).</td>
+        <td>140,00 - 260,00</td>
+      </tr>
+      <tr>
+        <td>VPS Agentes</td>
+        <td>3 meses (Hetzner CAX11/CX22).</td>
+        <td>66,00 - 84,00</td>
+      </tr>
+      <tr>
+        <td colspan="2" style="text-align:right"><strong>Total:</strong></td>
+        <td><strong>266,00 - 464,00</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 id="ameacas">9. Ameaças à Validade Documentadas</h2>
+  <p>Abaixo declaramos os limitadores inerentes à metodologia adotada, exigência para submissão em periódicos qualificados:</p>
+  <ol>
+    <li><strong>Contaminação de Tarefas:</strong> Mitigado por versionamento fechado pré-publicação e segregação de split de teste (20%).</li>
+    <li><strong>Lei de Goodhart:</strong> Para mitigar a superotimização interna sobre o HERMES, separou-se o autor do agente do aferidor da métrica.</li>
+    <li><strong>Avaliador Institucional Interno (Percepção de Viés):</strong> O avaliador (equipe CIIA) é simultaneamente o desenvolvedor de uma das soluções testadas (HERMES). Para evitar qualquer acusação de viés (ou a ideia de que estão "puxando a sardinha" para a própria solução), a mitigação mandatória é a <strong>liberação completa em modelo Open-Source</strong>. Ao tornar públicos os logs, a matriz de <em>prompts</em> e os <em>traces</em> de avaliação, qualquer terceiro pode auditar as métricas que explicam cada resultado, assegurando a neutralidade e a força comercial do benchmark.</li>
+  </ol>
+
+  <h2 id="pendencias">10. Pendências (A CONFIRMAR)</h2>
+  <div class="alert" style="border-left: 5px solid #d00;">
+    <span class="alert-title">Pontos de Bloqueio Operacional</span>
+    <ul>
+      <li>Designação metodológica para o 2º orquestrador de comparação (Sugestão: LangGraph).</li>
+      <li>Atribuição nominal dos encarregados da sanitização de dados (SEI/LGPD).</li>
+      <li>Acordo formal de cotas nos provedores institucionais (SINAPAD, RNP).</li>
+      <li>Definição da veiculação de publicação (Venue alvo).</li>
+    </ul>
+  </div>
+
+  <h2 id="referencias">Referências Bibliográficas</h2>
+  <div class="references" style="font-size: 10pt; line-height: 1.5; padding-left: 20px; text-indent: -20px; margin-bottom: 2em;">
+    <p>Dror, R., Baumer, G., Shlomov, S., &amp; Reichart, R. (2018). The Hitchhiker's Guide to Testing Statistical Significance in Natural Language Processing. Em <em>Proceedings of the 56th Annual Meeting of the Association for Computational Linguistics</em> (pp. 1383-1392). Association for Computational Linguistics.</p>
+    <p>Mialon, G., Dessì, R., Lomeli, M., Nalmpantis, C., Pasunuru, R., Raileanu, R., ... &amp; Scialom, T. (2023). Augmented Language Models: a Survey. <em>arXiv preprint arXiv:2302.07842</em>.</p>
+    <p>Patil, S. G., Zhang, T., Wang, X., &amp; Gonzalez, J. E. (2023). Gorilla: Large Language Model Connected with Massive APIs. <em>arXiv preprint arXiv:2305.15334</em>.</p>
+    <p>Qin, Y., Hu, S., Lin, Y., Chen, W., Ding, N., Cui, G., ... &amp; Sun, M. (2023). ToolLLM: Facilitating Large Language Models to Master 16000+ Real-world APIs. <em>arXiv preprint arXiv:2307.16789</em>.</p>
+    <p>Yao, S., Zhao, J., Yu, D., Du, N., Shafran, I., Narasimhan, K., &amp; Cao, Y. (2023). ReAct: Synergizing Reasoning and Acting in Language Models. Em <em>International Conference on Learning Representations (ICLR)</em>.</p>
+  </div>
+
+  <div class="footer">
+    HERMES-BENCH &copy; 2026. Documento de uso interno gerado e formatado proceduralmente.<br>
+    <em>Status: Requer revisão final.</em>
+  </div>
+
+</body>
+</html>
